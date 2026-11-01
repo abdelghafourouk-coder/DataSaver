@@ -148,8 +148,7 @@ class MainActivity : Activity() {
         }
         stats.text = "عدد مرات التنفيذ الفعلية: ${prefs.count}"
     }
-
-    private fun requestShizuku() {
+        private fun requestShizuku() {
         try {
             when {
                 !Shizuku.pingBinder() ->
@@ -158,4 +157,54 @@ class MainActivity : Activity() {
                     Toast.makeText(this, "الإذن ممنوح مسبقاً", Toast.LENGTH_SHORT).show()
                 else -> Shizuku.requestPermission(100)
             }
-        } catch (e: Th
+        } catch (e: Throwable) {
+            Toast.makeText(this, "تعذر الوصول إلى Shizuku", Toast.LENGTH_LONG).show()
+        }
+        refresh()
+    }
+
+    private fun openShizuku() {
+        val i = packageManager.getLaunchIntentForPackage("moe.shizuku.privileged.api")
+        if (i != null) {
+            startActivity(i)
+        } else {
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api")
+                )
+            )
+        }
+    }
+
+    private fun startSvc() {
+        startForegroundService(Intent(this, ScreenService::class.java))
+    }
+
+    private fun dp(v: Int) = (v * resources.displayMetrics.density).toInt()
+
+    private fun label(text: String, size: Float, color: Int) = TextView(this).apply {
+        this.text = text
+        textSize = size
+        setTextColor(color)
+        setPadding(0, dp(6), 0, dp(6))
+    }
+
+    private fun section(text: String) = label(text, 17f, Color.parseColor("#60A5FA")).apply {
+        setPadding(0, dp(22), 0, dp(6))
+    }
+
+    private fun button(text: String, onClick: () -> Unit) = Button(this).apply {
+        this.text = text
+        setOnClickListener { onClick() }
+    }
+
+    private fun toggle(text: String, initial: Boolean, onChange: (Boolean) -> Unit) = Switch(this).apply {
+        this.text = text
+        textSize = 15f
+        setTextColor(Color.WHITE)
+        isChecked = initial
+        setPadding(0, dp(10), 0, dp(10))
+        setOnCheckedChangeListener { _, v -> onChange(v) }
+    }
+}
