@@ -1,53 +1,68 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+package com.example.datasaver
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+import android.content.Context
 
-    <application
-        android:allowBackup="false"
-        android:icon="@android:drawable/ic_menu_manage"
-        android:label="مُوفر البيانات"
-        android:supportsRtl="true"
-        android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
+class Prefs(ctx: Context) {
+    private val sp = ctx.applicationContext.getSharedPreferences("datasaver", Context.MODE_PRIVATE)
 
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+    private fun b(key: String, def: Boolean) = sp.getBoolean(key, def)
+    private fun putB(key: String, v: Boolean) = sp.edit().putBoolean(key, v).apply()
+    private fun i(key: String, def: Int) = sp.getInt(key, def)
+    private fun putI(key: String, v: Int) = sp.edit().putInt(key, v).apply()
 
-        <service
-            android:name=".ScreenService"
-            android:exported="false"
-            android:foregroundServiceType="specialUse">
-            <property
-                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="screen_state_automation" />
-        </service>
+    var data: Boolean
+        get() = b("data", true)
+        set(v) = putB("data", v)
 
-        <receiver
-            android:name=".BootReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
+    var wifi: Boolean
+        get() = b("wifi", false)
+        set(v) = putB("wifi", v)
 
-        <provider
-            android:name="rikka.shizuku.ShizukuProvider"
-            android:authorities="${applicationId}.shizuku"
-            android:enabled="true"
-            android:exported="true"
-            android:multiprocess="false"
-            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
-    </application>
-</manifest>
+    var bluetooth: Boolean
+        get() = b("bluetooth", true)
+        set(v) = putB("bluetooth", v)
+
+    var silent: Boolean
+        get() = b("silent", false)
+        set(v) = putB("silent", v)
+
+    var skipMusic: Boolean
+        get() = b("skipMusic", true)
+        set(v) = putB("skipMusic", v)
+
+    var skipCharging: Boolean
+        get() = b("skipCharging", false)
+        set(v) = putB("skipCharging", v)
+
+    var delaySec: Int
+        get() = i("delaySec", 60)
+        set(v) = putI("delaySec", v)
+
+    var enabled: Boolean
+        get() = b("enabled", false)
+        set(v) = putB("enabled", v)
+
+    var offData: Boolean
+        get() = b("offData", false)
+        set(v) = putB("offData", v)
+
+    var offWifi: Boolean
+        get() = b("offWifi", false)
+        set(v) = putB("offWifi", v)
+
+    var offBluetooth: Boolean
+        get() = b("offBluetooth", false)
+        set(v) = putB("offBluetooth", v)
+
+    var offSilent: Boolean
+        get() = b("offSilent", false)
+        set(v) = putB("offSilent", v)
+
+    var prevRinger: Int
+        get() = i("prevRinger", 2)
+        set(v) = putI("prevRinger", v)
+
+    var count: Int
+        get() = i("count", 0)
+        set(v) = putI("count", v)
+}
